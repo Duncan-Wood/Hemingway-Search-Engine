@@ -128,3 +128,10 @@ This will automatically open the app in your default web browser. Alternatively,
 - [Word2Vec](https://radimrehurek.com/gensim/models/word2vec.html)
 - [Flask](https://flask.palletsprojects.com/en/1.1.x/)
 - [NumPy](https://numpy.org/)
+
+## About Me 
+**Duncan Wood**
+<br/>
+[LinkedIn](https://www.linkedin.com/in/duncanwoodpro/) |
+[Github](https://github.com/Duncan-Wood)
+<br/>
