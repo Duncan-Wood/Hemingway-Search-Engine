@@ -1,0 +1,12 @@
+/* App.css */
+
+.app {
+  background-color: #f5f7f9;
+  display: flex;
+}
+
+/* Style the PDFViewer */
+.PDF-viewer {
+  width: 75%;
+  margin: 0 auto;
+}

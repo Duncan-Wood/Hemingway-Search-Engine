@@ -1,0 +1,190 @@
+/* NavigationMenuOpen.css */
+/* Used the figma plugin and other tools to get the app to look extremely close to the example */
+
+.menu.menu-open {
+  transform: translateX(0);
+  transition: transform 0.3s ease-in-out;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  width: 300px;
+  height: 100vh;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 10%;
+}
+
+.close-icon {
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.menu-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--blue-700, #175cd3);
+}
+
+.input-section {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+label {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 4px;
+  color: #6c6c7f;
+}
+
+input {
+  margin-top: 4px;
+  padding: 6px;
+  border: 1px solid #dadde4;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  margin-left: 5%;
+  color: #000; /* Change color to black */
+  width: 80%;
+}
+
+.instances-count {
+  text-align: right;
+  margin: 0;
+  color: var(--gray-500, #6c6c7f);
+  /* font-family: Inter; */
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px; /* 142.857% */
+}
+
+.menu-buttons {
+  display: flex;
+  justify-content: space-evenly;
+  padding: 0px;
+  margin-top: 20px; /* Adjust this margin as needed */
+}
+
+.menu-buttons button {
+  background-color: #fff;
+  border: none;
+  cursor: pointer;
+  padding: 0px;
+}
+
+/* Adjust the icon size as needed */
+.menu-buttons button img {
+  width: 12vh; /* Adjust the width */
+  cursor: pointer;
+}
+
+.results {
+  height: 20px;
+  width: 51px;
+  color: #6c6c7f;
+  font-family: "Inter-SemiBold", Helvetica;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 20px;
+}
+.noResults {
+    height: 20px;
+    color: #6c6c7f;
+    font-family: "Inter-SemiBold", Helvetica;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+}
+
+.results-output {
+  align-items: flex-start;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 15px 0px;
+  color: #6c6c7f;
+  font-family: "Inter-Regular", Helvetica;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.replace-confirmation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: stretch;
+  border-radius: 4px;
+  border: 1px solid var(--gray-300, #dadde4);
+  padding: 24px;
+}
+.replace-container {
+  flex-direction: start;
+}
+.replace-container img {
+  width: 25%;
+}
+.replace-container button {
+  background-color: #fff;
+  border: none;
+  cursor: pointer;
+  padding: 0px;
+}
+
+.confirmation-menu {
+  display: flex;
+  padding: 24px;
+  flex-direction: column;
+  align-items: center;
+  align-self: stretch;
+  border-radius: 4px;
+  border: 1px solid var(--gray-300, #dadde4);
+}
+.confirmation-menu button {
+  margin: 0;
+}
+
+.confirmation-menu button img {
+  width: 60%;
+}
+
+.confirmation-text {
+  color: var(--gray-700, #404257);
+  text-align: center;
+  /* Text sm/Regular */
+  /* font-family: Inter; */
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px; /* 142.857% */
+}
+
+.confirmed-text {
+  align-self: stretch;
+
+  color: var(--gray-500, #6c6c7f);
+  text-align: center;
+  /* Text sm/Regular */
+  /* font-family: Inter; */
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px; /* 142.857% */
+}
