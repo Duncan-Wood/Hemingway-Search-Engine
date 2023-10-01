@@ -1,5 +1,7 @@
 # Hemmingway Search Engine
 
+![Hemmingway Search Engine Screenshot](./assets/hemmingway-search-engine-screenshot.png)
+
 Welcome to my first search engine! This project showcases my skills as a full-stack developer through a search engine application for hemmingway texts. Below, you'll find instructions on how to set up both the backend RESTful API and the frontend React app, along with other relevant project details.
 
 This app can allow users to search words from the corpus of text, create new words, update existing words, and delete words.
