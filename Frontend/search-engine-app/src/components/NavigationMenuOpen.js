@@ -18,7 +18,7 @@ const NavigationMenuOpen = ({ onClose }) => {
   const [state, setState] = useState({
     query: "", // The search query.
     results: [], // The search results.
-    // will create a similarResults array to store similar words eventually
+    similarResults: [], // Store similar words
     resultCount: 0, // The number of results.
     error: "", // The error message.
     showResultsSection: true, // Flag to show/hide results section.
@@ -42,18 +42,35 @@ const NavigationMenuOpen = ({ onClose }) => {
   };
 
 // Function to highlight query words in text from results
+// const highlightQueryWord = (text) => {
+//   const { query } = state;
+//   const queryRegExp = new RegExp(`(${query.split(" ").map(escapeRegExp).join("|")})`, "gi");
+
+//   return text.split(queryRegExp).map((part, index) => {
+//     if (queryRegExp.test(part)) {
+//       return (
+//         <strong key={index}>
+//           {part}
+//         </strong>
+//       );
+//     }
+//     return part;
+//   });
+// };
+
 // will eventually be used to highlight similar words by adding a similarResults array
+
+
 const highlightQueryWord = (text) => {
-  const { query } = state;
-  const queryRegExp = new RegExp(`(${query.split(" ").map(escapeRegExp).join("|")})`, "gi");
+  const { query, similarResults } = state;
+  const queryRegExp = new RegExp(
+    `(${[query, ...similarResults].map(escapeRegExp).join("|")})`,
+    "gi"
+  );
 
   return text.split(queryRegExp).map((part, index) => {
     if (queryRegExp.test(part)) {
-      return (
-        <strong key={index}>
-          {part}
-        </strong>
-      );
+      return <strong key={index}>{part}</strong>;
     }
     return part;
   });
@@ -65,70 +82,126 @@ const escapeRegExp = (str) => {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 };
 
+//test
+const fetchSearchResults = useCallback(async () => {
+  try {
+    const responseMatching = await axios.get(
+      `${API_BASE_URL}/find_matching_sentences?input=${state.query}`
+    );
+    const matchingSentences = responseMatching.data.matching_sentences;
 
-  const fetchSearchResults = useCallback(async () => {
-    // useCallback is used to prevent the function from being recreated on every render
-    try {
-      const responseMatching = await axios.get(
-        `${API_BASE_URL}/find_matching_sentences?input=${state.query}`
+    // Fetch similar words
+    const similarWordsResponse = await axios.get(
+      `${API_BASE_URL}/similar_words?w=${state.query}`
+    );
+
+    const similarWordsData = similarWordsResponse.data.similar_words;
+
+    // Extract and store similar words
+    const similarWords = similarWordsData.similar_words || [];
+
+    if (matchingSentences.length >= 3) {
+      // If we have at least three matching sentences, prioritize and shuffle them
+      const randomized = shuffleArray(matchingSentences.slice(0, 3));
+      setState((prevState) => ({
+        ...prevState,
+        results: randomized,
+        similarResults: similarWords,
+        resultCount: matchingSentences.length,
+        error: "",
+        hasSearched: true,
+      }));
+    } else {
+      // Fetch matching sentences for similar words
+      const similarWordsString = similarWords.join(',');
+      const sentencesResponse = await axios.get(
+        `${API_BASE_URL}/find_similar_sentences?similar_words=${similarWordsString}`
       );
-      const matchingSentences = responseMatching.data.matching_sentences;
-  
-      if (matchingSentences.length >= 3) {
-        // If we have at least three matching sentences, prioritize and shuffle them
-        const randomized = shuffleArray(matchingSentences.slice(0, 3));
-        setState((prevState) => ({
-          ...prevState,
-          results: randomized,
-          resultCount: matchingSentences.length,
-          error: "",
-          hasSearched: true,
-        }));
-      } else {
-        // Fetch similar words
-        const similarWordsResponse = await axios.get(
-          `${API_BASE_URL}/similar_words?w=${state.query}`
-        );
-  
-        const similarWordsData = similarWordsResponse.data.similar_words.similar_words;
-  
-        if (Array.isArray(similarWordsData) && similarWordsData.length > 0) {
-          // If we have similar words, fetch matching sentences for them
-          const similarWords = similarWordsData.slice(0, 3);
-          const similarWordsString = similarWords.join(',');
-          const sentencesResponse = await axios.get(
-            `${API_BASE_URL}/find_similar_sentences?similar_words=${similarWordsString}`
-          );
-          const similarSentences = sentencesResponse.data.matching_sentences;
-    
-          // Combine matching sentences and similar sentences, shuffle and select first three
-          const combinedSentences = [...matchingSentences, ...similarSentences];
-          // const randomized = shuffleArray(combinedSentences.slice(0, 3));
-  
-          setState((prevState) => ({
-            ...prevState,
-            results: combinedSentences, // Store all results
-            resultCount: combinedSentences.length, // Update the result count
-            error: "",
-            hasSearched: true,
-          }));
-        } else {
-          // If there are no similar words, show an error message
-          console.log('No similar words found.');
-          setState((prevState) => ({
-            ...prevState,
-            results: [],
-            resultCount: 0,
-            error: "No matching or similar sentences found.",
-            hasSearched: true,
-          }));
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      handleSearchError(error);
+      const similarSentences = sentencesResponse.data.matching_sentences;
+
+      // Combine matching sentences and similar sentences, shuffle and select first three
+      const combinedSentences = [...matchingSentences, ...similarSentences];
+      const randomized = shuffleArray(combinedSentences.slice(0, 3));
+
+      setState((prevState) => ({
+        ...prevState,
+        results: randomized,
+        similarResults: similarWords,
+        resultCount: combinedSentences.length,
+        error: "",
+        hasSearched: true,
+      }));
     }
-  }, [state.query]);
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    handleSearchError(error);
+  }
+}, [state.query]);
+
+  // const fetchSearchResults = useCallback(async () => {
+  //   // useCallback is used to prevent the function from being recreated on every render
+  //   try {
+  //     const responseMatching = await axios.get(
+  //       `${API_BASE_URL}/find_matching_sentences?input=${state.query}`
+  //     );
+  //     const matchingSentences = responseMatching.data.matching_sentences;
+  
+  //     if (matchingSentences.length >= 3) {
+  //       // If we have at least three matching sentences, prioritize and shuffle them
+  //       const randomized = shuffleArray(matchingSentences.slice(0, 3));
+  //       setState((prevState) => ({
+  //         ...prevState,
+  //         results: randomized,
+  //         resultCount: matchingSentences.length,
+  //         error: "",
+  //         hasSearched: true,
+  //       }));
+  //     } else {
+  //       // Fetch similar words
+  //       const similarWordsResponse = await axios.get(
+  //         `${API_BASE_URL}/similar_words?w=${state.query}`
+  //       );
+  
+  //       const similarWordsData = similarWordsResponse.data.similar_words.similar_words;
+  //       console.log(similarWordsData)
+  
+  //       if (Array.isArray(similarWordsData) && similarWordsData.length > 0) {
+  //         // If we have similar words, fetch matching sentences for them
+  //         const similarWords = similarWordsData.slice(0, 3);
+  //         const similarWordsString = similarWords.join(',');
+  //         const sentencesResponse = await axios.get(
+  //           `${API_BASE_URL}/find_similar_sentences?similar_words=${similarWordsString}`
+  //         );
+  //         const similarSentences = sentencesResponse.data.matching_sentences;
+    
+  //         // Combine matching sentences and similar sentences, shuffle and select first three
+  //         const combinedSentences = [...matchingSentences, ...similarSentences];
+  //         // const randomized = shuffleArray(combinedSentences.slice(0, 3));
+  
+  //         setState((prevState) => ({
+  //           ...prevState,
+  //           results: combinedSentences, // Store all results
+  //           resultCount: combinedSentences.length, // Update the result count
+  //           error: "",
+  //           hasSearched: true,
+  //         }));
+  //       } else {
+  //         // If there are no similar words, show an error message
+  //         console.log('No similar words found.');
+  //         setState((prevState) => ({
+  //           ...prevState,
+  //           results: [],
+  //           resultCount: 0,
+  //           error: "No matching or similar sentences found.",
+  //           hasSearched: true,
+  //         }));
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching data:', error);
+  //     handleSearchError(error);
+  //   }
+  // }, [state.query]);
 
   const handleSearchError = (error) => {
     const errorMessage = error.response
