@@ -80,7 +80,7 @@ const escapeRegExp = (str) => {
         setState((prevState) => ({
           ...prevState,
           results: randomized,
-          resultCount: 3,
+          resultCount: matchingSentences.length,
           error: "",
           hasSearched: true,
         }));
@@ -103,12 +103,12 @@ const escapeRegExp = (str) => {
     
           // Combine matching sentences and similar sentences, shuffle and select first three
           const combinedSentences = [...matchingSentences, ...similarSentences];
-          const randomized = shuffleArray(combinedSentences.slice(0, 3));
+          // const randomized = shuffleArray(combinedSentences.slice(0, 3));
   
           setState((prevState) => ({
             ...prevState,
-            results: randomized,
-            resultCount: 3,
+            results: combinedSentences, // Store all results
+            resultCount: combinedSentences.length, // Update the result count
             error: "",
             hasSearched: true,
           }));
@@ -265,7 +265,8 @@ const escapeRegExp = (str) => {
 
           {shouldShowResultsSection && (
             <SearchResults
-              results={state.results}
+              // results={state.results}
+              results={state.results.slice(0, 3)} // Display the first 3 results
               resultCount={state.resultCount}
               error={state.error}
               hasSearched={state.hasSearched}
